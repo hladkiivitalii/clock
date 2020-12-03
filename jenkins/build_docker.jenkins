@@ -25,7 +25,7 @@ pipeline {
         stage("create docker image") {
             steps {
                 echo " ============== start building image =================="
-                dir ('app') {
+                dir ('src') {
                 	sh 'docker build -t 068cuttip/clock:latest . '
                 }
             }
