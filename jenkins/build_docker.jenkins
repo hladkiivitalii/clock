@@ -1,0 +1,58 @@
+#!groovy
+// Run docker build
+properties([disableConcurrentBuilds()])
+
+pipeline {
+    agent {
+        label 'master'
+        }
+    triggers { pollSCM('* * * * *')}
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+        timestamps()
+    }
+    stages {
+        stage("docker login") {
+            steps {
+                echo "============ Docker login ============"
+                withCredentials([usernamePassword(credentialsId: 'dc7a8828-3444-4ed9-942f-768871771528', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh """
+                    docker login -u $USERNAME -p $PASSWORD
+                    """
+                }
+            }
+        }
+        stage("create docker image") {
+            steps {
+                echo " ============== start building image =================="
+                dir ('app') {
+                	sh 'docker build -t 068cuttip/clock:latest . '
+                }
+            }
+        }
+        stage("Docker push") {
+            steps {
+                echo " ============== push docker image =================="
+                sh '''
+                docker push 068cuttip/clock:latest
+                '''
+            }
+        }
+        stage("Pull Image") {
+            steps {
+                echo " ============== get docker image on server =================="
+                sh '''
+                ssh root@46.101.208.229 'docker pull 068cuttip/clock:latest'
+                '''
+            }
+        }
+        stage("Run Image") {
+            steps {
+                echo " ============== run docker image on server =================="
+                sh '''
+                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm 068cuttip/clock:latest '
+                '''
+            }
+        }
+    }
+}
