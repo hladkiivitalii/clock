@@ -26,23 +26,22 @@ pipeline {
             steps {
                 echo " ============== start building image =================="
                 dir ('src') {
-                	sh 'docker build -t 068cuttip/clock:latest . '
+                	sh 'docker build -t clock:latest . '
+                	sh 'docker tag clock:latest localhost:5000/clock:latest'
                 }
             }
         }
         stage("Docker push") {
             steps {
                 echo " ============== push docker image =================="
-                sh '''
-                docker push 068cuttip/clock:latest
-                '''
+                sh 'docker push localhost:5000/clock:latest'
             }
         }
         stage("Pull Image") {
             steps {
                 echo " ============== get docker image on server =================="
                 sh '''
-                ssh root@46.101.208.229 'docker pull 068cuttip/clock:latest'
+                ssh root@46.101.208.229 'docker pull 104.248.129.112:5000/clock:latest'
                 '''
             }
         }
@@ -50,7 +49,7 @@ pipeline {
             steps {
                 echo " ============== run docker image on server =================="
                 sh '''
-                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm 068cuttip/clock:latest '
+                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm clock:latest '
                 '''
             }
         }
