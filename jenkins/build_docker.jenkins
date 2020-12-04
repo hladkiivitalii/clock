@@ -15,10 +15,6 @@ pipeline {
         stage("docker login") {
             steps {
                 echo "============ Docker login ============"
-                    sh """
-                    docker login -u $USERNAME -p $PASSWORD
-                    """
-
             }
         }
         stage("create docker image") {
