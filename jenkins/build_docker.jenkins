@@ -15,6 +15,9 @@ pipeline {
         stage("docker login") {
             steps {
                 echo "============ Docker login ============"
+                sh """
+                docker login -u registry -p registry localhost:5000
+                """
             }
         }
         stage("create docker image") {
