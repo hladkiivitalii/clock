@@ -15,31 +15,34 @@ pipeline {
         stage("docker login") {
             steps {
                 echo "============ Docker login ============"
-                sh """
-                docker login -u registry -p registry localhost:5000
-                """
+                withCredentials([usernamePassword(credentialsId: 'dc7a8828-3444-4ed9-942f-768871771528', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
+                    sh """
+                    docker login -u $USERNAME -p $PASSWORD
+                    """
+                }
             }
         }
         stage("create docker image") {
             steps {
                 echo " ============== start building image =================="
                 dir ('src') {
-                	sh 'docker build -t clock:latest . '
-                	sh 'docker tag clock:latest localhost:5000/clock:latest'
+                	sh 'docker build -t 068cuttip/clock:latest . '
                 }
             }
         }
         stage("Docker push") {
             steps {
                 echo " ============== push docker image =================="
-                sh 'docker push localhost:5000/clock:latest'
+                sh '''
+                docker push 068cuttip/clock:latest
+                '''
             }
         }
         stage("Pull Image") {
             steps {
                 echo " ============== get docker image on server =================="
                 sh '''
-                ssh root@46.101.208.229 'docker pull 104.248.129.112:5000/clock:latest'
+                ssh root@46.101.208.229 'docker pull 068cuttip/clock:latest'
                 '''
             }
         }
@@ -47,7 +50,7 @@ pipeline {
             steps {
                 echo " ============== run docker image on server =================="
                 sh '''
-                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm clock:latest '
+                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm 068cuttip/clock:latest '
                 '''
             }
         }
