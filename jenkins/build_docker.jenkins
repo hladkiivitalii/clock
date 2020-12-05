@@ -21,7 +21,7 @@ pipeline {
             steps {
                 echo " ============== start building image =================="
                 dir ('src') {
-                	sh 'docker build -t 104.248.129.112:5000/clock:latest . '
+                	sh 'docker build -t localhost:5000/clock:latest . '
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 echo " ============== push docker image =================="
                 sh '''
-                docker push 104.248.129.112:5000/clock:latest
+                docker push localhost:5000/clock:latest
                 '''
             }
         }
