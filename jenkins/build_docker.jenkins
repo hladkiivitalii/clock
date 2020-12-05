@@ -45,6 +45,9 @@ pipeline {
             steps {
                 echo " ============== run docker image on server =================="
                 sh '''
+                ssh root@46.101.208.229 'docker stop clock '
+                '''
+                sh '''
                 ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm 104.248.129.112:5000/clock:latest '
                 '''
             }
