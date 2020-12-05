@@ -15,18 +15,13 @@ pipeline {
         stage("docker login") {
             steps {
                 echo "============ Docker login ============"
-                withCredentials([usernamePassword(credentialsId: 'd5bef5e1-77ff-4ccf-89b9-c920a0ff550e', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                    sh """
-                    docker login -u $USERNAME -p $PASSWORD
-                    """
-                }
             }
         }
         stage("create docker image") {
             steps {
                 echo " ============== start building image =================="
                 dir ('src') {
-                	sh 'docker build -t 068cuttip/clock:latest . '
+                	sh 'docker build -t http://104.248.129.112:5000/clock:latest . '
                 }
             }
         }
@@ -34,7 +29,7 @@ pipeline {
             steps {
                 echo " ============== push docker image =================="
                 sh '''
-                docker push 068cuttip/clock:latest
+                docker push http://104.248.129.112:5000/clock:latest
                 '''
             }
         }
@@ -42,7 +37,7 @@ pipeline {
             steps {
                 echo " ============== get docker image on server =================="
                 sh '''
-                ssh root@46.101.208.229 'docker pull 068cuttip/clock:latest'
+                ssh root@46.101.208.229 'docker pull http://104.248.129.112:5000/clock:latest'
                 '''
             }
         }
@@ -50,7 +45,7 @@ pipeline {
             steps {
                 echo " ============== run docker image on server =================="
                 sh '''
-                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm 068cuttip/clock:latest '
+                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm http://104.248.129.112:5000/clock:latest '
                 '''
             }
         }
