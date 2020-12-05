@@ -21,7 +21,7 @@ pipeline {
             steps {
                 echo " ============== start building image =================="
                 dir ('src') {
-                	sh 'docker build -t http://104.248.129.112:5000/clock:latest . '
+                	sh 'docker build -t 104.248.129.112:5000/clock:latest . '
                 }
             }
         }
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 echo " ============== push docker image =================="
                 sh '''
-                docker push http://104.248.129.112:5000/clock:latest
+                docker push 104.248.129.112:5000/clock:latest
                 '''
             }
         }
@@ -37,7 +37,7 @@ pipeline {
             steps {
                 echo " ============== get docker image on server =================="
                 sh '''
-                ssh root@46.101.208.229 'docker pull http://104.248.129.112:5000/clock:latest'
+                ssh root@46.101.208.229 'docker pull 104.248.129.112:5000/clock:latest'
                 '''
             }
         }
@@ -45,7 +45,7 @@ pipeline {
             steps {
                 echo " ============== run docker image on server =================="
                 sh '''
-                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm http://104.248.129.112:5000/clock:latest '
+                ssh root@46.101.208.229 'docker run -p 80:80 -d --name clock  --rm 104.248.129.112:5000/clock:latest '
                 '''
             }
         }
